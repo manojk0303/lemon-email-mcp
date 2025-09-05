@@ -187,7 +187,7 @@ async def root():
     "to": "test@example.com",
     "subject": "Test Email",
     "body": "Hello from Railway!",
-    "fromemail": "mail@normanszobotka.com",
+    "fromemail": "mail@member-notification.com",
     "api_key": "your-lemon-email-api-key-here"
   }'</pre>
         </div>

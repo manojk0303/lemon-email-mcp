@@ -289,7 +289,7 @@ async def run_standalone_test():
             subject="Standalone Test Email",
             body="This is a test email from the standalone server.",
             fromname="Standalone Test",
-            fromemail="mail@normanszobotka.com"
+            fromemail="mail@member-notification.com"
         )
         
         if result["success"]:

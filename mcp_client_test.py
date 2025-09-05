@@ -111,7 +111,7 @@ class WorkingMCPClient:
                         "subject": "🤖 MCP Protocol Test Success!",
                         "body": "Congratulations! 🎉\n\nYour Lemon Email MCP server is working perfectly!\n\nThis email was sent through:\n✅ MCP Protocol communication\n✅ Your custom MCP server\n✅ Lemon Email API\n\nYour server is ready for AI agent integration!",
                         "fromname": "MCP Test Robot",
-                        "fromemail": "mail@normanszobotka.com",
+                        "fromemail": "mail@member-notification.com",
                         "tag": "mcp-success-test"
                     }
                 }
