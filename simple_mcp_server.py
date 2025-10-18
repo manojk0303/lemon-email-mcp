@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-Lemon Email MCP Server - Fixed Version with Proper CallToolResult Handling
+Lemon Email MCP Server - Direct API Integration
+No intermediate servers - connects directly to Lemon Email API
 """
 
 import asyncio
@@ -17,11 +18,6 @@ try:
     from mcp.server import NotificationOptions, Server
     from mcp.server.stdio import stdio_server
     from mcp.types import (
-        CallToolRequest,
-        CallToolResult,
-        ListToolsRequest, 
-        ListToolsResult,
-        TextContent,
         Tool,
     )
     MCP_AVAILABLE = True
@@ -31,15 +27,17 @@ except ImportError as e:
 
 # Server configuration
 SERVER_NAME = "lemon-email"
-SERVER_VERSION = "1.0.0"
+SERVER_VERSION = "2.0.0"
+LEMON_API_URL = "https://app.xn--lemn-sqa.com/api/transactional/send"
 
-class LemonEmailServer:
-    def __init__(self):
-        self.api_base_url = os.getenv("LEMON_EMAIL_API_BASE_URL", "https://app.xn--lemn-sqa.com/api")
-        self.api_key = os.getenv("LEMON_EMAIL_API_KEY")
-        
-        if not self.api_key:
-            raise ValueError("LEMON_EMAIL_API_KEY environment variable is required")
+class LemonEmailClient:
+    """Direct client for Lemon Email API - no intermediates"""
+    
+    def __init__(self, api_key: str):
+        if not api_key:
+            raise ValueError("Lemon Email API key is required")
+        self.api_key = api_key
+        self.api_url = LEMON_API_URL
     
     async def send_email(
         self,
@@ -47,17 +45,34 @@ class LemonEmailServer:
         subject: str,
         body: str,
         fromname: str = "Email Assistant",
-        fromemail: Optional[str] = None,
+        fromemail: str = "mail@member-notification.com",
         toname: str = "",
         tag: str = "mcp-agent",
         variables: Optional[Dict[str, Any]] = None,
         replyto: Optional[str] = None
     ) -> Dict[str, Any]:
-        """Send an email using the Lemon Email API"""
+        """
+        Send email directly to Lemon Email API
+        
+        Args:
+            to: Recipient email address
+            subject: Email subject
+            body: Email body (plain text or HTML)
+            fromname: Sender display name
+            fromemail: Sender email address
+            toname: Recipient display name
+            tag: Tag for categorization/tracking
+            variables: Template variables (dict)
+            replyto: Reply-to address
+            
+        Returns:
+            Dict with success status and response details
+        """
         
         if not replyto:
             replyto = fromemail
         
+        # Prepare payload for Lemon Email API
         payload = {
             "fromname": fromname,
             "fromemail": fromemail,
@@ -70,18 +85,18 @@ class LemonEmailServer:
             "replyto": replyto
         }
         
+        # Set up headers with API key
         headers = {
             "Content-Type": "application/json",
             "X-Auth-APIKey": self.api_key
         }
         
-        url = f"{self.api_base_url}/transactional/send"
-        
+        # Make direct API call to Lemon Email
         async with httpx.AsyncClient() as client:
             try:
                 response = await client.post(
-                    url, 
-                    headers=headers, 
+                    self.api_url,
+                    headers=headers,
                     json=payload,
                     timeout=30.0
                 )
@@ -93,139 +108,95 @@ class LemonEmailServer:
                 }
                 
                 if not response.is_success:
-                    response_data["error"] = f"API error {response.status_code}: {response.text}"
+                    response_data["error"] = f"Lemon API error {response.status_code}: {response.text}"
                 
                 return response_data
                 
             except httpx.TimeoutException:
                 return {
                     "success": False,
-                    "error": "Request timed out after 30 seconds"
+                    "error": "Request to Lemon API timed out after 30 seconds"
                 }
             except Exception as e:
                 return {
                     "success": False,
-                    "error": f"Network error: {str(e)}"
+                    "error": f"Network error connecting to Lemon API: {str(e)}"
                 }
 
-def create_server():
-    """Create and configure the MCP server"""
+def create_mcp_server(api_key: str):
+    """Create and configure the MCP server with direct Lemon API access"""
+    
     if not MCP_AVAILABLE:
-        raise ImportError("MCP library not available")
-        
+        raise ImportError("MCP library not available. Install with: pip install mcp")
+    
     server = Server(SERVER_NAME)
-    email_server = LemonEmailServer()
+    email_client = LemonEmailClient(api_key)
     
     @server.list_tools()
     async def list_tools() -> List[Tool]:
-        """List available tools"""
+        """List available email tools"""
         return [
             Tool(
                 name="send_email",
                 description=(
-                    "Send an email using the Lemon Email service. "
-                    "This tool allows AI agents to send transactional emails."
+                    "Send an email directly via Lemon Email API. "
+                    "Perfect for AI agents to send transactional emails, notifications, and messages."
                 ),
                 inputSchema={
                     "type": "object",
                     "properties": {
                         "to": {
                             "type": "string",
-                            "description": "Recipient email address"
+                            "description": "Recipient email address (required)"
                         },
                         "subject": {
-                            "type": "string", 
-                            "description": "Email subject line"
+                            "type": "string",
+                            "description": "Email subject line (required)"
                         },
                         "body": {
                             "type": "string",
-                            "description": "Email body content"
+                            "description": "Email body content - supports plain text or HTML (required)"
                         },
                         "fromname": {
                             "type": "string",
-                            "description": "Sender name",
+                            "description": "Sender display name (default: 'Email Assistant')",
                             "default": "Email Assistant"
                         },
                         "fromemail": {
                             "type": "string",
-                            "description": "Sender email address (required)"
+                            "description": "Sender email address (default: 'mail@member-notification.com')",
+                            "default": "mail@member-notification.com"
                         },
                         "toname": {
                             "type": "string",
-                            "description": "Recipient name",
+                            "description": "Recipient display name (optional)",
                             "default": ""
                         },
                         "tag": {
                             "type": "string",
-                            "description": "Email tag for tracking",
+                            "description": "Tag for email categorization/tracking (default: 'mcp-agent')",
                             "default": "mcp-agent"
                         },
                         "variables": {
                             "type": "object",
-                            "description": "Template variables (key-value pairs)",
+                            "description": "Template variables as key-value pairs (optional)",
                             "additionalProperties": True
                         },
                         "replyto": {
                             "type": "string",
-                            "description": "Reply-to email address"
+                            "description": "Reply-to email address (optional, defaults to fromemail)"
                         }
                     },
-                    "required": ["to", "subject", "body", "fromemail"]
+                    "required": ["to", "subject", "body"]
                 }
             )
         ]
     
     @server.call_tool()
     async def call_tool(name: str, arguments: dict):
-        """Handle tool calls with simplified return"""
-        if name == "send_email":
-            try:
-                # Validate required fields
-                required = ["to", "subject", "body", "fromemail"]
-                missing = [field for field in required if field not in arguments or not arguments[field]]
-                
-                if missing:
-                    # Return simple dict instead of CallToolResult
-                    return {
-                        "content": [
-                            {
-                                "type": "text",
-                                "text": f"❌ Missing required fields: {', '.join(missing)}"
-                            }
-                        ]
-                    }
-                
-                result = await email_server.send_email(**arguments)
-                
-                if result["success"]:
-                    return {
-                        "content": [
-                            {
-                                "type": "text",
-                                "text": f"✅ Email sent successfully!\nStatus: {result['status_code']}\nResponse: {result['response']}"
-                            }
-                        ]
-                    }
-                else:
-                    return {
-                        "content": [
-                            {
-                                "type": "text",
-                                "text": f"❌ Email failed: {result.get('error', 'Unknown error')}"
-                            }
-                        ]
-                    }
-                    
-            except Exception as e:
-                return {
-                    "content": [
-                        {
-                            "type": "text",
-                            "text": f"❌ Error sending email: {str(e)}"
-                        }
-                    ]
-                }
-        else:
+        """Handle tool execution - send emails via Lemon API"""
+        
+        if name != "send_email":
             return {
                 "content": [
                     {
@@ -234,25 +205,83 @@ def create_server():
                     }
                 ]
             }
+        
+        try:
+            # Validate required fields
+            required = ["to", "subject", "body"]
+            missing = [field for field in required if field not in arguments or not arguments[field]]
+            
+            if missing:
+                return {
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": f"❌ Missing required fields: {', '.join(missing)}"
+                        }
+                    ]
+                }
+            
+            # Send email directly to Lemon API
+            result = await email_client.send_email(**arguments)
+            
+            if result["success"]:
+                return {
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": (
+                                f"✅ Email sent successfully via Lemon API!\n"
+                                f"📧 To: {arguments['to']}\n"
+                                f"📝 Subject: {arguments['subject']}\n"
+                                f"🔖 Tag: {arguments.get('tag', 'mcp-agent')}\n"
+                                f"📊 Status: {result['status_code']}\n"
+                                f"🎯 Response: {result['response']}"
+                            )
+                        }
+                    ]
+                }
+            else:
+                return {
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": f"❌ Email failed: {result.get('error', 'Unknown error from Lemon API')}"
+                        }
+                    ]
+                }
+                
+        except Exception as e:
+            return {
+                "content": [
+                    {
+                        "type": "text",
+                        "text": f"❌ Error sending email: {type(e).__name__}: {str(e)}"
+                    }
+                ]
+            }
     
     return server
 
 async def run_mcp_server():
-    """Run the MCP server with better error handling"""
+    """Run the MCP server with direct Lemon API connection"""
+    
     if not MCP_AVAILABLE:
         print("❌ MCP library not available. Install with: pip install mcp")
         return
-        
-    if not os.getenv("LEMON_EMAIL_API_KEY"):
+    
+    api_key = os.getenv("LEMON_EMAIL_API_KEY")
+    if not api_key:
         print("❌ LEMON_EMAIL_API_KEY environment variable required")
+        print("💡 Set it with: export LEMON_EMAIL_API_KEY='your-key-here'")
         return
     
-    print(f"🚀 Starting {SERVER_NAME} MCP server v{SERVER_VERSION}...")
+    print(f"🍋 Starting {SERVER_NAME} MCP Server v{SERVER_VERSION}")
+    print(f"🔗 Direct connection to: {LEMON_API_URL}")
     print("📡 Waiting for MCP client connection...")
     print("💡 Press Ctrl+C to stop")
     
     try:
-        server = create_server()
+        server = create_mcp_server(api_key)
         
         async with stdio_server() as (read_stream, write_stream):
             initialization_options = InitializationOptions(
@@ -265,8 +294,8 @@ async def run_mcp_server():
             )
             
             await server.run(
-                read_stream, 
-                write_stream, 
+                read_stream,
+                write_stream,
                 initialization_options
             )
             
@@ -278,44 +307,67 @@ async def run_mcp_server():
         traceback.print_exc()
 
 async def run_standalone_test():
-    """Run standalone test without MCP"""
-    print("🧪 Running standalone email test...")
+    """Test direct connection to Lemon API"""
+    
+    print("🧪 Testing direct connection to Lemon Email API...")
+    print("=" * 50)
+    
+    api_key = os.getenv("LEMON_EMAIL_API_KEY")
+    if not api_key:
+        print("❌ LEMON_EMAIL_API_KEY environment variable required")
+        return
     
     try:
-        email_server = LemonEmailServer()
+        email_client = LemonEmailClient(api_key)
         
-        result = await email_server.send_email(
-            to="manojk030303@gmail.com",
-            subject="Standalone Test Email",
-            body="This is a test email from the standalone server.",
-            fromname="Standalone Test",
-            fromemail="mail@member-notification.com"
+        print("📧 Sending test email...")
+        result = await email_client.send_email(
+            to="test@example.com",  # Change to your email
+            subject="🧪 Direct API Test - Lemon Email MCP",
+            body=(
+                "This is a test email sent directly to Lemon Email API!\n\n"
+                "✅ No intermediate servers\n"
+                "✅ Direct API connection\n"
+                "✅ Fast and reliable\n\n"
+                "Your MCP server is working perfectly!"
+            ),
+            fromname="Lemon MCP Test",
+            fromemail="mail@member-notification.com",
+            tag="direct-api-test"
         )
         
+        print("\n" + "=" * 50)
         if result["success"]:
-            print(f"✅ Email sent successfully!")
-            print(f"   Status: {result['status_code']}")
-            print(f"   Response: {result['response']}")
+            print("✅ SUCCESS! Email sent directly to Lemon API")
+            print(f"📊 Status Code: {result['status_code']}")
+            print(f"📝 Response: {result['response']}")
+            print("\n🎉 Your direct API connection is working!")
         else:
-            print(f"❌ Email failed: {result['error']}")
+            print("❌ FAILED to send email")
+            print(f"⚠️  Error: {result.get('error', 'Unknown error')}")
             
     except Exception as e:
         print(f"❌ Test error: {type(e).__name__}: {e}")
 
 def print_usage():
     """Print usage instructions"""
-    print("🍋 Lemon Email MCP Server")
-    print("=" * 30)
-    print("Usage:")
+    print("🍋 Lemon Email MCP Server - Direct API")
+    print("=" * 50)
+    print("\nUsage:")
     print("  python simple_mcp_server.py          # Start MCP server")
-    print("  python simple_mcp_server.py test     # Run standalone test")
+    print("  python simple_mcp_server.py test     # Test direct API connection")
     print("  python simple_mcp_server.py help     # Show this help")
-    print("\nEnvironment:")
-    print("  LEMON_EMAIL_API_KEY     Required API key")
-    print("  LEMON_EMAIL_API_BASE_URL Optional base URL")
+    print("\nEnvironment Variables:")
+    print("  LEMON_EMAIL_API_KEY (required)       Your Lemon Email API key")
+    print("\nGet API Key:")
+    print("  DM @Norman_Szobotka on Twitter")
+    print("  Email: manojk030303@gmail.com")
+    print("\nDirect API Endpoint:")
+    print(f"  {LEMON_API_URL}")
 
 async def main():
-    """Main entry point with better argument handling"""
+    """Main entry point"""
+    
     if len(sys.argv) > 1:
         command = sys.argv[1].lower()
         

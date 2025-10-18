@@ -1,161 +1,72 @@
-# 🍋 Lemon Email MCP
+# 🍋 Lemon Email MCP - Direct API Integration
 
-> **The email API that just works.** Open source. AI-ready. Zero config.
+> **Send emails directly from AI agents.** No intermediate servers. Zero config.
 
 <div align="center">
 
-[![Live Demo](https://img.shields.io/badge/🌐_Try_Now-Live-brightgreen?style=for-the-badge)](https://lemon-email-mcp-production.up.railway.app/)
-[![Open Source](https://img.shields.io/badge/📖_Open_Source-MIT-blue?style=for-the-badge)](https://github.com/manojk0303/lemon-email-mcp)
-[![Get API Key](https://img.shields.io/badge/🔑_Get_Key-Instant-orange?style=for-the-badge)](https://x.com/Norman_Szobotka)
+[![Direct API](https://img.shields.io/badge/🔗_Direct_API-Lemon_Email-brightgreen?style=for-the-badge)](https://app.xn--lemn-sqa.com)
+[![Open Source](https://img.shields.io/badge/📖_Open_Source-MIT-blue?style=for-the-badge)](LICENSE)
+[![MCP Compatible](https://img.shields.io/badge/🤖_MCP-Compatible-orange?style=for-the-badge)](https://modelcontextprotocol.io)
 
 </div>
 
 ---
 
-## ⚡ Send Your First Email in 30 Seconds
+## 🚀 What This Does
 
-```bash
-curl -X POST https://lemon-email-mcp-production.up.railway.app/send-email \
-  -H "Content-Type: application/json" \
-  -d '{
-    "to": "user@example.com",
-    "subject": "Hello World 👋",
-    "body": "This was stupid easy to send.",
-    "fromemail": "mail@member-notification.com",
-    "api_key": "your-key-here"
-  }'
-```
+**Connects AI agents directly to Lemon Email API** - no intermediate servers, no proxies, just direct API calls.
 
-**Need an API key?** → DM [@Norman_Szobotka](https://x.com/Norman_Szobotka) or email [manojk030303@gmail.com](mailto:manojk030303@gmail.com)
-
-💡 **Pro tip**: Use `mail@member-notification.com` as your sender - it's pre-configured and works with any API key!
+- ✅ **Direct connection** to Lemon Email API
+- ✅ **No Railway or other intermediates** - pure API client
+- ✅ **MCP protocol** for AI agent integration
+- ✅ **Works with Claude Desktop, Continue.dev, Cline**
+- ✅ **Open source** - see exactly what it does
 
 ---
 
-## 🚀 Why This is a No-Brainer
+## ⚡ Quick Start (30 seconds)
 
-**🌐 Use Our API** (Recommended)
-- Zero setup required
-- Works instantly
-- Use `mail@member-notification.com` as sender (pre-configured)
-- Or configure your own domain
-- Global infrastructure
-- Free to try
-
-**🏠 Run Locally** (Open Source)
-- Full source code available
-- Host anywhere you want  
-- Customize everything
-- MIT licensed
-
-**🤖 AI Integration**
-- Built for AI agents and assistants
-- MCP protocol support
-- Works with Claude Desktop, Continue.dev, and more
-- Perfect for automation
-
----
-
-## 🛠 Quick Integrations
-
-<details>
-<summary><b>JavaScript</b> - Copy & paste ready</summary>
-
-```javascript
-const response = await fetch('https://lemon-email-mcp-production.up.railway.app/send-email', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    to: 'user@example.com',
-    subject: 'Your app just got email superpowers',
-    body: 'Welcome to the future!',
-    fromemail: 'mail@member-notification.com', // Pre-configured sender
-    api_key: 'your-key-here'
-  })
-});
-
-const result = await response.json();
-console.log('Email sent!', result);
-```
-
-</details>
-
-<details>
-<summary><b>Python</b> - Two lines, that's it</summary>
-
-```python
-import requests
-
-response = requests.post('https://lemon-email-mcp-production.up.railway.app/send-email', json={
-    'to': 'user@example.com',
-    'subject': 'Python made this easy',
-    'body': 'No complicated setup needed!',
-    'fromemail': 'mail@member-notification.com',  # Pre-configured sender
-    'api_key': 'your-key-here'
-})
-
-print('Done!', response.json())
-```
-
-</details>
-
-<details>
-<summary><b>Continue.dev (VS Code)</b> - AI email assistant</summary>
-
-**1. Clone the repo:**
-```bash
-git clone https://github.com/manojk0303/lemon-email-mcp.git
-cd lemon-email-mcp
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-pip install -r requirements.txt
-```
-
-**2. Install Continue.dev extension in VS Code**
-
-**3. Create MCP config:**
-Create `.continue/mcpServers/lemon-email.yaml` in your workspace:
-
-```yaml
-name: Lemon Email MCP Server
-version: 1.0.0
-schema: v1
-mcpServers:
-  - name: Email Assistant
-    command: /path/to/your/lemon-email-mcp/venv/bin/python
-    args:
-      - "/path/to/your/lemon-email-mcp/simple_mcp_server.py"
-    env:
-      LEMON_EMAIL_API_KEY: "your-key-here"
-```
-
-**4. Restart VS Code and ask Continue:**
-```
-"Send a welcome email to user@example.com"
-```
-
-Now Continue can compose and send emails automatically!
-
-</details>
-
-<details>
-<summary><b>Claude Desktop</b> - AI email assistant</summary>
-
-**1. Clone the repo:**
+**1. Clone & Install**
 ```bash
 git clone https://github.com/manojk0303/lemon-email-mcp.git
 cd lemon-email-mcp
 pip install -r requirements.txt
 ```
 
-**2. Add to your Claude Desktop config:**
+**2. Get API Key**
+- DM [@Norman_Szobotka](https://x.com/Norman_Szobotka) on Twitter
+- Or email: [manojk030303@gmail.com](mailto:manojk030303@gmail.com)
+- You'll get your key instantly!
 
+**3. Set API Key**
+```bash
+export LEMON_EMAIL_API_KEY="your-key-here"
+```
+
+**4. Test It**
+```bash
+python simple_mcp_server.py test
+```
+
+Done! 🎉
+
+---
+
+## 🔧 Usage Methods
+
+### **Method 1: Claude Desktop** (Recommended for Mac users)
+
+**1. Find your Claude config:**
+- Mac: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- Windows: `%APPDATA%\Claude\claude_desktop_config.json`
+
+**2. Add this to your config:**
 ```json
 {
   "mcpServers": {
     "lemon-email": {
       "command": "python",
-      "args": ["/path/to/your/lemon-email-mcp/simple_mcp_server.py"],
+      "args": ["/full/path/to/lemon-email-mcp/simple_mcp_server.py"],
       "env": {
         "LEMON_EMAIL_API_KEY": "your-key-here"
       }
@@ -164,118 +75,217 @@ pip install -r requirements.txt
 }
 ```
 
-Now Claude can send emails for you automatically!
+**3. Restart Claude Desktop**
 
-</details>
+**4. Test it:**
+```
+"Send a test email to test@example.com with subject 'Hello from Claude' and body 'This is amazing!'"
+```
+
+Claude will now send emails directly via Lemon API!
 
 ---
 
-## 🏠 Run It Locally (Open Source)
+### **Method 2: Continue.dev** (VS Code)
 
-**1. Clone & Setup**
-```bash
-git clone https://github.com/manojk0303/lemon-email-mcp.git
-cd lemon-email-mcp
-pip install -r requirements.txt
+**1. Install Continue.dev extension in VS Code**
 
-# Set your API key
-export LEMON_EMAIL_API_KEY="your-key-here"
+**2. Create MCP config file:**
+
+Create `.continue/config.json` in your project:
+```json
+{
+  "mcpServers": [
+    {
+      "name": "lemon-email",
+      "command": "python",
+      "args": ["/full/path/to/lemon-email-mcp/simple_mcp_server.py"],
+      "env": {
+        "LEMON_EMAIL_API_KEY": "your-key-here"
+      }
+    }
+  ]
+}
 ```
 
-**2. Test MCP Server**
+**3. Restart VS Code**
+
+**4. Ask Continue:**
+```
+"Send an email to user@example.com about the new feature"
+```
+
+---
+
+### **Method 3: Direct API (No MCP)**
+
+Want to use the Lemon API directly in your Python code?
+```python
+import httpx
+import asyncio
+
+async def send_email():
+    headers = {
+        "Content-Type": "application/json",
+        "X-Auth-APIKey": "your-lemon-api-key"
+    }
+    
+    payload = {
+        "to": "user@example.com",
+        "subject": "Hello World",
+        "body": "This is a direct API call!",
+        "fromname": "Your App",
+        "fromemail": "mail@member-notification.com",
+        "tag": "direct-api"
+    }
+    
+    async with httpx.AsyncClient() as client:
+        response = await client.post(
+            "https://app.xn--lemn-sqa.com/api/transactional/send",
+            headers=headers,
+            json=payload
+        )
+        print(response.json())
+
+asyncio.run(send_email())
+```
+
+---
+
+## 📚 How It Works
+```
+Your AI Agent → MCP Protocol → simple_mcp_server.py → Lemon Email API
+                                                              ↓
+                                                         📧 Email Sent
+```
+
+**No intermediate servers!** Direct connection to Lemon Email.
+
+---
+
+## 🔍 Available Tool
+
+The MCP server exposes one tool: `send_email`
+
+**Parameters:**
+- `to` (required) - Recipient email
+- `subject` (required) - Email subject
+- `body` (required) - Email content
+- `fromname` (optional) - Sender name (default: "Email Assistant")
+- `fromemail` (optional) - Sender email (default: "mail@member-notification.com")
+- `toname` (optional) - Recipient name
+- `tag` (optional) - Email tag for tracking
+- `variables` (optional) - Template variables
+- `replyto` (optional) - Reply-to address
+
+---
+
+## 🧪 Testing
+
+**Test direct API connection:**
 ```bash
 python simple_mcp_server.py test
 ```
 
-**3. Start Web Server** (Optional)
+**Start MCP server:**
 ```bash
-python web_server.py
-# Your local server runs at http://localhost:8000
+python simple_mcp_server.py
 ```
 
-**4. Deploy Anywhere**
-- Railway ✅
-- Vercel ✅  
-- Heroku ✅
-- Your own server ✅
+**Get help:**
+```bash
+python simple_mcp_server.py help
+```
 
 ---
 
-## 🔥 Real Use Cases
+## 🛠️ Troubleshooting
 
-**🤖 AI Agents**
-- Customer support automation
-- Smart notifications  
-- Workflow orchestration
+**"LEMON_EMAIL_API_KEY required"**
+- Set environment variable: `export LEMON_EMAIL_API_KEY="your-key"`
+- Or add to your MCP config (see examples above)
 
-**🚀 Web Apps**
-- User onboarding sequences
-- Password reset flows
-- Order confirmations
+**"MCP library not available"**
+```bash
+pip install mcp httpx pydantic
+```
 
-**⚡ Side Projects**
-- Newsletter campaigns
-- Contact form handling
-- Event notifications
+**"Connection timeout"**
+- Check your internet connection
+- Verify API key is correct
+- Try test command: `python simple_mcp_server.py test`
 
----
-
-## 📚 What You Get
-
-**☁️ Hosted API**
-- `POST /send-email` - Send emails instantly
-- `GET /health` - System status
-- `GET /docs` - Interactive documentation
-
-**📦 Open Source Code**
-- Full Python implementation
-- MIT license - use anywhere
-- Deploy to any platform
-- Customize everything
-
-**🤖 AI-Ready MCP Server**
-- Works with Claude Desktop
-- Continue.dev integration
-- VS Code Copilot compatible
-- Any MCP-compatible tool
+**Claude Desktop not seeing the tool**
+- Verify JSON syntax in config file
+- Use full absolute paths, not ~
+- Restart Claude Desktop completely
+- Check Claude logs for errors
 
 ---
 
-## 🌟 Getting Started
+## 📖 Architecture
 
-**Option 1: Use Our API (2 minutes)**
-1. Get API key → DM [@Norman_Szobotka](https://x.com/Norman_Szobotka)
-2. Copy code example above
-3. Send your first email
-4. Done!
+**What's removed:**
+- ❌ Railway deployment
+- ❌ Web server wrapper  
+- ❌ FastAPI endpoints
+- ❌ Intermediate API layer
 
-**Option 2: AI Integration (5 minutes)**
-1. Clone this repo
-2. Install dependencies
-3. Configure your AI tool (Claude/Continue.dev)
-4. Ask AI to send emails for you
+**What remains:**
+- ✅ Direct Lemon API client
+- ✅ MCP protocol server
+- ✅ Pure Python implementation
+- ✅ Minimal dependencies
 
-**Option 3: Self-Host (10 minutes)**  
-1. Clone and setup locally
-2. Deploy to your preferred platform
-3. Use your own infrastructure
+---
+
+## 🤝 Contributing
+
+Contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md)
+
+---
+
+## 📄 License
+
+MIT License - see [LICENSE](LICENSE)
+
+---
+
+## 🔑 Getting API Key
+
+**Need a Lemon Email API key?**
+
+1. DM [@Norman_Szobotka](https://x.com/Norman_Szobotka) on Twitter
+2. Or email: [manojk030303@gmail.com](mailto:manojk030303@gmail.com)
+
+You'll get your key within seconds!
+
+---
+
+## 🌟 Features
+
+- **Direct API** - No proxies or intermediate servers
+- **Fast** - Direct connection means lower latency
+- **Simple** - One Python file, minimal dependencies
+- **Reliable** - Fewer moving parts = fewer failures
+- **Open Source** - See exactly what it does
+- **AI-Ready** - Perfect for AI agents and automation
 
 ---
 
 <div align="center">
 
-## 🚀 Ready to send emails the easy way?
+## Ready to send emails from AI?
 
-[![Try the API](https://img.shields.io/badge/🌐_Try_API_Now-Free-brightgreen?style=for-the-badge)](https://lemon-email-mcp-production.up.railway.app/)
-[![Download Code](https://img.shields.io/badge/📦_Get_Source_Code-Open_Source-blue?style=for-the-badge)](https://github.com/manojk0303/lemon-email-mcp)
-[![Get API Key](https://img.shields.io/badge/🔑_Get_API_Key-30_seconds-orange?style=for-the-badge)](https://x.com/Norman_Szobotka)
+[![Get Started](https://img.shields.io/badge/🚀_Get_Started-Now-brightgreen?style=for-the-badge)](https://github.com/manojk0303/lemon-email-mcp)
+[![Get API Key](https://img.shields.io/badge/🔑_Get_Key-Free-orange?style=for-the-badge)](https://x.com/Norman_Szobotka)
 
-**Questions?** → [manojk030303@gmail.com](mailto:manojk030303@gmail.com) | **Updates** → [@Norman_Szobotka](https://x.com/Norman_Szobotka)
+**Questions?** → [manojk030303@gmail.com](mailto:manojk030303@gmail.com)
 
 </div>
 
 ---
 
 <div align="center">
-<sub>Open source • MIT licensed • Made for developers</sub>
+<sub>Direct API • No intermediates • MIT licensed</sub>
 </div>
